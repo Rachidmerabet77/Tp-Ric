@@ -31,9 +31,8 @@ class simplemlp:
                 A = sigmoid(Z)  # Activation sigmoïde pour la couche de sortie
             activations.append(A)
             
-            print("iteration ", i, ":")
-            print(A)  
-        return A
+             
+        return activations, valeurs_Z
     
     
     def retropropagation(self, X, Y):
@@ -50,8 +49,7 @@ class simplemlp:
                 dZ = dA * derivee_sigmoid(activations[i + 1])  # Dérivée pour la couche de sortie
             else:
                 dZ = dA * derivee_relu(valeurs_Z[i])  # Dérivée pour les couches cachées
-            print("iteration ", i, ":")
-            print(dZ) 
+        
             dW[i] = np.dot(activations[i].T, dZ) / m  # Gradient des poids
             dB[i] = np.sum(dZ, axis=0, keepdims=True) / m  # Gradient des biais
             dA = np.dot(dZ, self.poids[i].T)  # Propagation de l'erreur vers l'arrière      
@@ -62,15 +60,24 @@ class simplemlp:
             self.poids[i] -= self.taux_apprentissage * dW[i]
             self.biais[i] -= self.taux_apprentissage * dB[i]
             
-            
-    
-                
-                
- 
-    
-mlp = simplemlp(nb_neurones_entree=4, couches_cachees=[10, 5], nb_neurones_sortie=1)
-test = np.array([[0.2, 0.5, 0.8, 0.7]]) 
- 
- 
-Z = mlp.propagation_avant(test)
-print("Sortie du resau de neurone:", Z)        
+# l'entrainement de mlp
+    def entrainer(self, X, Y, epochs=1000):
+        for epoch in range(epochs):
+            self.retropropagation(X, Y)
+            if epoch % 100 == 0:
+                activations, _ = self.propagation_avant(X)
+                erreur = np.mean((Y - activations[-1])**2)
+                print(f"Epoch {epoch}, Erreur: {erreur:.5f}")
+
+#exmple
+X_train = np.array([[0.2, 0.5, 0.8, 0.7]])
+Y_train = np.array([[1]])  
+
+
+mlp = simplemlp(nb_neurones_entree=4, couches_cachees=[10, 5], nb_neurones_sortie=1, taux_apprentissage=0.1)
+mlp.entrainer(X_train, Y_train, epochs=10000)
+
+
+activations, _ = mlp.propagation_avant(X_train)
+print("Sortie apres entrainement:", activations[-1])
+   
