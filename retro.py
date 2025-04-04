@@ -4,10 +4,10 @@ def sigmoid(x):
 def derivee_sigmoid(x):
     return x * (1 - x)
 
-def relu(x):
-    return np.maximum(0, x)
-def derivee_relu(x):
-    return (x > 0).astype(float)
+#def relu(x):
+ #   return np.maximum(0, x)
+#def derivee_relu(x):
+ #   return (x > 0).astype(float)
 
 class simplemlp:
     def __init__(self, nb_neurones_entree, couches_cachees, nb_neurones_sortie, taux_apprentissage=0.01):
@@ -26,7 +26,7 @@ class simplemlp:
             Z = np.dot(activations[-1], self.poids[i]) + self.biais[i]
             valeurs_Z.append(Z)
             if i < len(self.poids) - 1:
-                A = relu(Z)  # Activation ReLU pour les couches cachées
+                A = sigmoid(Z)  # Activation ReLU pour les couches cachées
             else:
                 A = sigmoid(Z)  # Activation sigmoïde pour la couche de sortie
             activations.append(A)
@@ -45,10 +45,8 @@ class simplemlp:
         
            #  calculer les gradients des Wet de B pour chaque couche   
         for i in reversed(range(len(self.poids))):
-            if i == len(self.poids) - 1:
-                dZ = dA * derivee_sigmoid(valeurs_Z[i ])  # calculer la derivie pour la couche de sortie
-            else:
-                dZ = dA * derivee_relu(valeurs_Z[i])  #calculer la deriveer pour les couvhes cachees
+           
+            dZ = dA * derivee_sigmoid(valeurs_Z[i])  #calculer la deriveer pour  tout les couvhes cachees
         
             dW[i] = np.dot(activations[i].T, dZ) / m  # Gradient des valeur de W
             dB[i] = np.sum(dZ, axis=0, keepdims=True) / m  # Gradient  de la valeur de B
@@ -75,7 +73,7 @@ X_train = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
 Y_train = np.array([[0], [1], [1], [0]])
 
 
-mlp = simplemlp(nb_neurones_entree=2, couches_cachees=[4, 2], nb_neurones_sortie=1, taux_apprentissage=0.1)
+mlp = simplemlp(nb_neurones_entree=2, couches_cachees=[4,2], nb_neurones_sortie=1, taux_apprentissage=0.05)
 Resultat = mlp.entrainer(X_train, Y_train, epochs=1000)
 print("errore de entrenments :", Resultat)
 
