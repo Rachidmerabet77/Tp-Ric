@@ -37,25 +37,25 @@ class simplemlp:
     
     def retropropagation(self, X, Y):
         activations, valeurs_Z = self.propagation_avant(X)
-        dW = [None] * len(self.poids)
-        dB = [None] * len(self.biais)
+        dW = [0] * len(self.poids)
+        dB = [0] * len(self.biais)
         dA = activations[-1] - Y  # Erreur de la sortie
         m = Y.shape[0]  # Nombre d'exemples 
         
         
-               
+           #  calculer les gradients des Wet de B pour chaque couche   
         for i in reversed(range(len(self.poids))):
             if i == len(self.poids) - 1:
-                dZ = dA * derivee_sigmoid(activations[i + 1])  # Dérivée pour la couche de sortie
+                dZ = dA * derivee_sigmoid(valeurs_Z[i ])  # calculer la derivie pour la couche de sortie
             else:
-                dZ = dA * derivee_relu(valeurs_Z[i])  # Dérivée pour les couches cachées
+                dZ = dA * derivee_relu(valeurs_Z[i])  #calculer la deriveer pour les couvhes cachees
         
-            dW[i] = np.dot(activations[i].T, dZ) / m  # Gradient des poids
-            dB[i] = np.sum(dZ, axis=0, keepdims=True) / m  # Gradient des biais
+            dW[i] = np.dot(activations[i].T, dZ) / m  # Gradient des valeur de W
+            dB[i] = np.sum(dZ, axis=0, keepdims=True) / m  # Gradient  de la valeur de B
             dA = np.dot(dZ, self.poids[i].T)  # Propagation de l'erreur vers l'arrière      
         
         
-                # Mise à jour des poids et biais
+    # mise a jour des valeur de W et B 
         for i in range(len(self.poids)):
             self.poids[i] -= self.taux_apprentissage * dW[i]
             self.biais[i] -= self.taux_apprentissage * dB[i]
@@ -67,17 +67,18 @@ class simplemlp:
             if epoch % 100 == 0:
                 activations, _ = self.propagation_avant(X)
                 erreur = np.mean((Y - activations[-1])**2)
-                print(f"Epoch {epoch}, Erreur: {erreur:.5f}")
+                #print(f"Epoch {epoch}, Erreur: {erreur:.5f}")
+        return erreur        
 
 #exmple
-X_train = np.array([[0.2, 0.5, 0.8, 0.7]])
-Y_train = np.array([[1]])  
+X_train = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+Y_train = np.array([[0], [1], [1], [0]])
 
 
-mlp = simplemlp(nb_neurones_entree=4, couches_cachees=[10, 5], nb_neurones_sortie=1, taux_apprentissage=0.1)
-mlp.entrainer(X_train, Y_train, epochs=10000)
-
+mlp = simplemlp(nb_neurones_entree=2, couches_cachees=[4, 2], nb_neurones_sortie=1, taux_apprentissage=0.1)
+Resultat = mlp.entrainer(X_train, Y_train, epochs=1000)
+print("errore de entrenments :", Resultat)
 
 activations, _ = mlp.propagation_avant(X_train)
-print("Sortie apres entrainement:", activations[-1])
+print("Sortie apres entrainement:\n", activations[-1])
    
