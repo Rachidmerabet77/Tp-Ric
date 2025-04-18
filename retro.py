@@ -4,7 +4,7 @@ def sigmoid(x):
 def derivee_sigmoid(x):
     return x * (1 - x)
 
-def relu(x):
+def relu(x): 
    return np.maximum(0, x)
 def derivee_relu(x):
    return (x > 0).astype(float)
@@ -70,13 +70,13 @@ class simplemlp:
                 erreur = np.mean((Y - activations[-1])**2)
         return erreur        
 
-#exmple
-X_train = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-Y_train = np.array([[0], [1], [1], [0]])
+with open('data.txt', 'r') as file:
+    X_train = file.readlines()  
+    print(X_train)
 
 
 mlp = simplemlp(nb_neurones_entree=2, couches_cachees=[4], nb_neurones_sortie=1, taux_apprentissage=1)
-Resultat = mlp.entrainer(X_train, Y_train, epochs=10000)
+Resultat = mlp.entrainer(X_train, epochs=10000)
 print("errore de entrenments :", Resultat)
 
 activations, _ = mlp.propagation_avant(X_train)
