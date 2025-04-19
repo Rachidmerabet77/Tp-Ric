@@ -1,3 +1,4 @@
+
 import numpy as np
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
@@ -68,17 +69,19 @@ class simplemlp:
             if epoch % 1000 == 0:
                 activations, _ = self.propagation_avant(X)
                 erreur = np.mean((Y - activations[-1])**2)
+        niveau_apprentissage = (1 - erreur) * 100
+        print(f"Niveau de apprentissage atteint : {niveau_apprentissage:.2f}%")        
         return erreur        
 
-with open('data.txt', 'r') as file:
-    X_train = file.readlines()  
-    print(X_train)
+data = np.loadtxt("data.txt")
+X_train = data[:, :-1]
+Y_train = data[:, -1:]
 
 
-mlp = simplemlp(nb_neurones_entree=2, couches_cachees=[4], nb_neurones_sortie=1, taux_apprentissage=1)
-Resultat = mlp.entrainer(X_train, epochs=10000)
+mlp = simplemlp(nb_neurones_entree=3, couches_cachees=[8], nb_neurones_sortie=1, taux_apprentissage=1)
+Resultat = mlp.entrainer(X_train,Y_train, epochs=10000)
 print("errore de entrenments :", Resultat)
 
 activations, _ = mlp.propagation_avant(X_train)
-print("Sortie apres entrainement:\n", activations[-1])
+#print("Sortie apres entrainement:\n", activations[-1][:10])
    
