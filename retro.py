@@ -1,5 +1,8 @@
 
 import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 def derivee_sigmoid(x):
@@ -74,8 +77,13 @@ class simplemlp:
         return erreur        
 
 data = np.loadtxt("data.txt")
-X_train = data[:, :-1]
-Y_train = data[:, -1:]
+X = data[:, :-1]
+Y = data[:, -1:]
+
+X_train = X[:4000]
+Y_train = Y[:4000]
+X_test = X[4000:]
+Y_test = Y[4000:]
 
 
 mlp = simplemlp(nb_neurones_entree=3, couches_cachees=[8], nb_neurones_sortie=1, taux_apprentissage=1)
@@ -85,3 +93,27 @@ print("errore de entrenments :", Resultat)
 activations, _ = mlp.propagation_avant(X_train)
 #print("Sortie apres entrainement:\n", activations[-1][:10])
    
+
+
+
+predictions = activations[-1]
+pred_classes = (predictions > 0.5).astype(int)  
+
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+
+mask_1 = (pred_classes == 1).flatten()
+ax.scatter(X_train[mask_1, 0], X_train[mask_1, 1], X_train[mask_1, 2], c='green', label='Classe 1')
+
+
+mask_0 = (pred_classes == 0).flatten()
+ax.scatter(X_train[mask_0, 0], X_train[mask_0, 1], X_train[mask_0, 2], c='red', label='Classe 0')
+
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
+ax.set_title('Résultats de classification en 3D')
+ax.legend()
+plt.show()
