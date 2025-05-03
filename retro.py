@@ -72,24 +72,50 @@ class simplemlp:
             if epoch % 1000 == 0:
                 activations, _ = self.propagation_avant(X)
                 erreur = np.mean((Y - activations[-1])**2)
+                print(f"Epoch {epoch}, Erreur: {erreur:.4f}")
         niveau_apprentissage = (1 - erreur) * 100
         print(f"Niveau de apprentissage atteint : {niveau_apprentissage:.2f}%")        
         return erreur        
 
+
 data = np.loadtxt("data.txt")
 X = data[:, :-1]
 Y = data[:, -1:]
-
-X_train = X[:4000]
-Y_train = Y[:4000]
-X_test = X[4000:]
-Y_test = Y[4000:]
+X_train = X[:16000]
+Y_train = Y[:16000]
 
 
-mlp = simplemlp(nb_neurones_entree=3, couches_cachees=[8], nb_neurones_sortie=1, taux_apprentissage=1)
+
+
+
+
+mlp = simplemlp(nb_neurones_entree=3, couches_cachees=[8], nb_neurones_sortie=1, taux_apprentissage=10)
 Resultat = mlp.entrainer(X_train,Y_train, epochs=10000)
 print("errore de entrenments :", Resultat)
 
+# Sauvegarde manuelle des poids et biais
+dict_save = {}
+for i, w in enumerate(mlp.poids):
+    dict_save[f"poids_{i}"] = w
+for i, b in enumerate(mlp.biais):
+    dict_save[f"biais_{i}"] = b
+
+np.savez("rachid.npz", **dict_save)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
 activations, _ = mlp.propagation_avant(X_train)
 #print("Sortie apres entrainement:\n", activations[-1][:10])
    
@@ -117,3 +143,4 @@ ax.set_zlabel('Z')
 ax.set_title('Résultats de classification en 3D')
 ax.legend()
 plt.show()
+"""
