@@ -27,3 +27,14 @@ def propagation_avant(X, poids, biais):
 X_new = np.loadtxt("me.txt")
 Y_pred = propagation_avant(X_new, poids, biais)
 print("le resultat est :" , Y_pred)
+classes = (Y_pred > 0.5).astype(int)
+
+
+
+
+# Sauvegarder les resultats dans un fichier texte
+with open("resultats.txt", "w") as f:
+    for x, y in zip(X_new, classes):
+        ligne = ' '.join(map(str, x)) + f' {y[0]}\n'
+        f.write(ligne)
+print("Les resultats ont ete sauvegardes dans 'resultats.txt'")
